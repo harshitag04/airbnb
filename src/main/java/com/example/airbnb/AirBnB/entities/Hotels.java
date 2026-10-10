@@ -16,7 +16,7 @@ public class Hotels {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long Id;
+    private Long id;
 
     @Column(nullable = false)
     private String name;
@@ -41,4 +41,6 @@ public class Hotels {
     @Column(nullable = false)
     private boolean active;
 
+    @OneToMany(mappedBy = "hotel")
+    private List<Rooms> rooms;
 }
