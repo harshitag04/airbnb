@@ -2,9 +2,7 @@ package com.example.airbnb.AirBnB.entities;
 
 import com.example.airbnb.AirBnB.enums.BookingStatus;
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -17,6 +15,8 @@ import java.util.Set;
 @Getter
 @Setter
 @Builder
+@RequiredArgsConstructor
+@AllArgsConstructor
 public class Bookings {
 
     @Id

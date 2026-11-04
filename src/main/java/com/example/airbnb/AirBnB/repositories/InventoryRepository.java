@@ -1,6 +1,6 @@
 package com.example.airbnb.AirBnB.repositories;
 
-import com.example.airbnb.AirBnB.DTOs.HotelDTO;
+import com.example.airbnb.AirBnB.DTOs.HotelPriceDTO;
 import com.example.airbnb.AirBnB.entities.Hotels;
 import com.example.airbnb.AirBnB.entities.Inventory;
 import com.example.airbnb.AirBnB.entities.Rooms;
@@ -29,8 +29,8 @@ public interface InventoryRepository extends JpaRepository<Inventory, Long> {
             HAVING COUNT(i.date) = :daysCount
             """)
     Page<Hotels> findHotelsWithAvailableInventory(String city, LocalDate startDate,
-                                                  LocalDate endDate, Integer numberOfRooms,
-                                                  Long daysCount, Pageable pageable);
+                                                         LocalDate endDate, Integer numberOfRooms,
+                                                         Long daysCount, Pageable pageable);
 
     @Query("""
             SELECT i FROM Inventory i
@@ -42,4 +42,6 @@ public interface InventoryRepository extends JpaRepository<Inventory, Long> {
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     List<Inventory> findAndLockAvailableRepository(Long roomId, LocalDate checkInDate,
                                                    LocalDate checkOutDate, Integer roomsCount);
+
+    List<Inventory> findByHotelAndDateBetween(Hotels hotels, LocalDate startDate, LocalDate endDate);
 }

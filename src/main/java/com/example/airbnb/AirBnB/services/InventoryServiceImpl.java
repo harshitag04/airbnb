@@ -1,12 +1,11 @@
 package com.example.airbnb.AirBnB.services;
 
-import com.example.airbnb.AirBnB.DTOs.HotelDTO;
+import com.example.airbnb.AirBnB.DTOs.HotelPriceDTO;
 import com.example.airbnb.AirBnB.DTOs.HotelSearchRequest;
-import com.example.airbnb.AirBnB.entities.Hotels;
 import com.example.airbnb.AirBnB.entities.Inventory;
 import com.example.airbnb.AirBnB.entities.Rooms;
+import com.example.airbnb.AirBnB.repositories.HotelMinPriceRepository;
 import com.example.airbnb.AirBnB.repositories.InventoryRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -24,6 +23,7 @@ public class InventoryServiceImpl implements InventoryService{
 
     private final ModelMapper modelMapper;
     private final InventoryRepository inventoryRepository;
+    private final HotelMinPriceRepository hotelMinPriceRepository;
 
     @Override
     public void initializeRoomForAYear(Rooms room) {
@@ -53,17 +53,17 @@ public class InventoryServiceImpl implements InventoryService{
     }
 
     @Override
-    public Page<HotelDTO> searchHotels(HotelSearchRequest hotelSearchRequest) {
+    public Page<HotelPriceDTO> searchHotels(HotelSearchRequest hotelSearchRequest) {
 
         Long daysCount = ChronoUnit.DAYS.between(hotelSearchRequest.getStartDate(),
                 hotelSearchRequest.getEndDate()) + 1;
 
         Pageable pageable = PageRequest.of(hotelSearchRequest.getPage(), hotelSearchRequest.getSize());
 
-        Page<Hotels> hotelsPage = inventoryRepository.findHotelsWithAvailableInventory(hotelSearchRequest.getCity(),
+        Page<HotelPriceDTO> hotelsPage = hotelMinPriceRepository.findHotelsWithAvailableInventory(hotelSearchRequest.getCity(),
                 hotelSearchRequest.getStartDate(), hotelSearchRequest.getEndDate(),
                 hotelSearchRequest.getNumberOfRooms(), daysCount, pageable);
 
-        return hotelsPage.map((element) -> modelMapper.map(element, HotelDTO.class));
+        return hotelsPage;
     }
 }
