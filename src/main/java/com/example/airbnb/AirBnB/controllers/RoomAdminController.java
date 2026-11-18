@@ -1,6 +1,7 @@
 package com.example.airbnb.AirBnB.controllers;
 
 import com.example.airbnb.AirBnB.DTOs.RoomDTO;
+import com.example.airbnb.AirBnB.repositories.RoomRepository;
 import com.example.airbnb.AirBnB.services.RoomService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -37,5 +38,11 @@ public class RoomAdminController {
     public ResponseEntity<RoomDTO> deleteRoomById(@PathVariable Long roomId) {
         roomService.deleteRoomById(roomId);
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{roomId}")
+    public ResponseEntity<RoomDTO> updateRoomById(@PathVariable Long hotelId, @PathVariable Long roomId,
+                                                  @RequestBody RoomDTO roomDTO){
+        return ResponseEntity.ok(roomService.updateRoomById(hotelId, roomId, roomDTO));
     }
 }

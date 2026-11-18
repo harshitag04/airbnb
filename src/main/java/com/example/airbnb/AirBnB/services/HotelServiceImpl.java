@@ -10,14 +10,19 @@ import com.example.airbnb.AirBnB.repositories.HotelRepository;
 import com.example.airbnb.AirBnB.repositories.RoomRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static com.example.airbnb.utils.AppUtils.getCurrentUser;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class HotelServiceImpl implements HotelService{
 
     private final HotelRepository hotelRepository;
@@ -110,5 +115,17 @@ public class HotelServiceImpl implements HotelService{
         for(Rooms rooms: exist.getRooms()){
             inventoryService.initializeRoomForAYear(rooms);
         }
+    }
+
+    @Override
+    public List<HotelDTO> getAllHotels() {
+        User user = getCurrentUser();
+        log.info("Getting all hotels for the admin user with ID: {}", user.getId());
+        List<Hotels> hotels = hotelRepository.findByOwner(user);
+
+        return hotels
+                .stream()
+                .map((hotel) -> modelMapper.map(hotel, HotelDTO.class))
+                .collect(Collectors.toList());
     }
 }

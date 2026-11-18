@@ -53,5 +53,4 @@ public class AuthController {
         String accessToken = authService.refreshToken(refreshToken);
         return ResponseEntity.ok(new LoginResponseDTO(accessToken));
     }
-
 }

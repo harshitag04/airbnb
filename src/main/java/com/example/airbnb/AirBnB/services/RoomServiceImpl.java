@@ -17,6 +17,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.example.airbnb.utils.AppUtils.getCurrentUser;
+
 @Service
 @RequiredArgsConstructor
 public class RoomServiceImpl implements RoomService{
@@ -79,6 +81,7 @@ public class RoomServiceImpl implements RoomService{
     }
 
     @Override
+    @Transactional
     public RoomDTO updateRoomById(Long hotelId, Long roomId, RoomDTO roomDTO) {
         Hotels hotel = hotelRepository.findById(hotelId)
                 .orElseThrow(() -> new ResourceNotFoundException("Hotel with Id {} " + hotelId + "does not exist"));
@@ -86,14 +89,17 @@ public class RoomServiceImpl implements RoomService{
                 .findById(roomId)
                 .orElseThrow(() -> new ResourceNotFoundException("Room not found with ID: "+roomId));
 
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = getCurrentUser();
         if(!user.equals(hotel.getOwner())) {
             throw new UnAuthorisedException("This user does not own this hotel with id: "+hotelId);
         }
 
-        Rooms newRoom = modelMapper.map(roomDTO, Rooms.class);
-        newRoom.setId(roomId);
-        Rooms savedRoom = roomRepository.save(newRoom);
+        modelMapper.map(roomDTO, room);
+        room.setId(roomId);
+
+//        TODO: if price or inventory is updated, then update the inventory for this room
+
+        Rooms savedRoom = roomRepository.save(room);
         return modelMapper.map(savedRoom, RoomDTO.class);
     }
 }

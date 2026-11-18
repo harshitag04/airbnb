@@ -4,6 +4,7 @@ import com.example.airbnb.AirBnB.entities.Inventory;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Service
 public class PricingService {
@@ -18,5 +19,12 @@ public class PricingService {
         DynamicPricingStrategy dynamicPricingStrategy4 = new SurgePricingStrategy(dynamicPricingStrategy3);
 
         return dynamicPricingStrategy4.calculatePrice(inventory);
+    }
+
+    //    Return the sum of price of this inventory list
+    public BigDecimal calculateTotalPrice(List<Inventory> inventoryList) {
+        return inventoryList.stream()
+                .map(this::calculateDynamicPricing)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 }

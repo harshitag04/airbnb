@@ -64,4 +64,7 @@ public class Bookings {
             inverseJoinColumns = @JoinColumn(name = "guest_id")
     )
     private Set<Guest> guest;
+
+    @Column(unique = true)
+    private String paymentSessionId;
 }
